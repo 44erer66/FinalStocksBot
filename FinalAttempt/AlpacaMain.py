@@ -1,4 +1,5 @@
 #IMPORTS
+#final
 import numpy as np
 import pickle
 import pandas as pd
@@ -7,13 +8,21 @@ import alpaca_trade_api as tradeapi
 from termcolor import colored
 from attempt3 import get_model
 from PullData import refresh_data
-
+import yfinance as yf
 key = "AKH3R964QCZO3M4XMHTL"
 sec = "Gmxy44G6Q0EpagU5ndARSNdwmVZzBtOflxNmxbou"
 url = "https://api.alpaca.markets"
 api = tradeapi.REST(key, sec, url, api_version='v2')
 account = api.get_account()
+def parsePrice(symbol, prev):
+    while True:
+        try:
+            ticker = yf.Ticker(symbol)
+            todays_data = ticker.history(period='1d')
+            return todays_data['Close'][0]
 
+        except:
+            return prev
 #STOCK ANALYSIS FUNCTIONS
 def wilders_rsi(data: list, window_length: int, use_rounding: bool = True) -> typing.List[typing.Any]:
     """
@@ -138,8 +147,8 @@ def make_prediction(sym):
 
 
 
-    stockData = pd.read_csv('/Users/44erer66/Desktop/StockBot/TestingData/'+symbol+'.csv')
-    with open("/Users/44erer66/Desktop/StockBot/Agents/"+symbol+".pickle", "rb") as f:
+    stockData = pd.read_csv('/Users/44erer66/PycharmProjects/FinalStocksBot/TestingData/'+symbol+'.csv')
+    with open("/Users/44erer66/PycharmProjects/FinalStocksBot/Agents/"+symbol+".pickle", "rb") as f:
         model = pickle.load(f)
     prices = list(stockData["Close"])
     day = len(prices)-1
@@ -183,11 +192,13 @@ def sell_stock(symbol, amt):
 def run_day():
     dt = datetime.now()
     day = int(dt.weekday())
-
-    if day>-1:
+    print(day)
+    if day == 0 or day == 1 or day == 2 or day == 6:
         prediction = make_prediction('AAPL')
         print(prediction)
         run = True
+        BoughtAt = 0
+        plsmins = 0
         while run:
             now = datetime.now()
             current_hour = int(now.strftime("%H"))
@@ -197,17 +208,36 @@ def run_day():
             if current_hour == 6 and current_minute > 30:
                 if prediction == 1:
                     buy_stock('AAPL', 30)
-                    pass
+                    BoughtAt = parsePrice('AAPL', 0)
+                    plsmins = 1
+                    print('We Bought At', BoughtAt)
+
+
                 else:
                     sell_stock('AAPL', 30)
+                    BoughtAt = parsePrice('AAPL', 0)
+                    plsmins = 0
+                    print('We Bought At', BoughtAt)
                     pass
                 print(colored("WE BOUGHT THE STOCK!!", 'green'))
                 run = False
         run2 = True
         while run2:
+            currPrice = parsePrice('AAPL', BoughtAt)
             now = datetime.now()
             current_hour = int(now.strftime("%H"))
             current_minute = int(now.strftime("%M"))
+            if plsmins == 1:
+                if currPrice < BoughtAt*0.98:
+                    sell_stock('AAPL', 30)
+                    print('WE SOLD EARLY AT', currPrice)
+                    break
+            else:
+                if currPrice > BoughtAt * 1.02:
+                    buy_stock('AAPL', 30)
+                    print('WE SOLD EARLY AT', currPrice)
+                    break
+
             if current_minute == 0:
                 print(current_hour, current_minute)
             if current_hour == 12 and current_minute >= 57:
@@ -232,9 +262,6 @@ def main():
         current_hour = int(now.strftime("%H"))
         current_min = int(now.strftime("%M"))
 
-
-
-        print('hello')
         x = run_day()
         print(x)
 main()

@@ -211,8 +211,8 @@ finalso = []
 finalsa = []
 for pos, symbol in enumerate(['AAPL']):
 
-        stockData = pd.read_csv('/Users/44erer66/Desktop/StockBot/TestingData/'+symbol+'.csv')
-        with open("/Users/44erer66/Desktop/StockBot/Agents/"+symbol+".pickle", "rb") as f:
+        stockData = pd.read_csv('/Users/44erer66/PycharmProjects/FinalStocksBot/StocksData/'+symbol+'.csv')
+        with open("/Users/44erer66/PycharmProjects/FinalStocksBot/Agents/"+symbol+".pickle", "rb") as f:
             modelo = pickle.load(f)
         with open('DTagent.pickle', 'rb') as f:
             model2 = pickle.load(f)
@@ -279,4 +279,4 @@ for pos, symbol in enumerate(['AAPL']):
 print("Money: ",money)
 awnser = finalso.index(max(finalso))
 print(sum(losses)/len(losses), sum(dubs)/len(dubs))
-print(finalso[awnser], symbols[awnser], finalsa[awnser], len(modelOutputs))
+print(finalso[awnser], finalsa[awnser], len(modelOutputs))

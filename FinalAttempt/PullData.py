@@ -12,5 +12,6 @@ def refresh_data(sym):
         data = yf.download(symbol, start=start_date,
                            end=end_date)
 
-        data.to_csv("/Users/44erer66/Desktop/StockBot/TestingData/"+symbol+".csv")
+        data.to_csv("/Users/44erer66/PycharmProjects/FinalStocksBot/TestingData/"+symbol+".csv")
 
+refresh_data('TQQQ')

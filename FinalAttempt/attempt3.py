@@ -199,7 +199,7 @@ def get_model(sym):
         inputs = []
         outputs = []
 
-        stockData = pd.read_csv('/Users/44erer66/Desktop/StockBot/StocksData/'+symbol+'.csv')
+        stockData = pd.read_csv('/Users/44erer66/PycharmProjects/FinalStocksBot/StocksData/'+symbol+'.csv')
         prices = []
         for day in range(len(stockData["High"])):
 
@@ -289,13 +289,13 @@ def get_model(sym):
 
             DtReg.fit(X_train, y_train)
 
-            with open("/Users/44erer66/Desktop/StockBot/Agents/"+symbol+".pickle", "wb") as file:
+            with open("/Users/44erer66/PycharmProjects/FinalStocksBot/Agents/"+symbol+".pickle", "wb") as file:
 
                 pickle.dump(DtReg, file)
                 file.close()
             print(symbol)
         except:
-            with open("/Users/44erer66/Desktop/StockBot/Agents/" + symbol + ".pickle", "wb") as file:
+            with open("/Users/44erer66/PycharmProjects/FinalStocksBot/Agents/" + symbol + ".pickle", "wb") as file:
 
                 pickle.dump("This was a fail", file)
                 print("This was a fail", symbol)
@@ -309,7 +309,7 @@ def get_modelDT(sym):
         inputs = []
         outputs = []
 
-        stockData = pd.read_csv('/Users/44erer66/Desktop/StockBot/StocksData/'+symbol+'.csv')
+        stockData = pd.read_csv('/Users/44erer66/PycharmProjects/FinalStocksBot/StocksData/'+symbol+'.csv')
         prices = []
         for day in range(len(stockData["High"])):
 
@@ -410,3 +410,5 @@ def get_modelDT(sym):
                 pickle.dump("This was a fail", file)
                 print("This was a fail", symbol)
                 file.close()
+
+get_model('AAPL')
